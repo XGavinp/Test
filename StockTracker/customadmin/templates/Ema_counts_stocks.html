@@ -1,0 +1,148 @@
+{% extends "./base2.html" %}
+{% block title %}Stock Ema{% endblock title %}
+{% block content %}
+{% load static %}
+<link rel="icon" href="{% static 'images/TrendSight_logo.png' %}" type="image/png">
+<style>
+    /* Common styles */
+    body {
+    font-family: 'lato', sans-serif;
+    }
+    .container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 0 10px;
+    position: relative; /* Set container as relative for absolute positioning */
+    }
+    h2 {
+    font-size: 26px;
+    margin: 20px 0;
+    text-align: center;
+    }
+    h1 {
+    font-size: 30px;
+    margin: 20px 0;
+    text-align: center;
+    color: #FC466B;  /* fallback for old browsers */
+    color: -webkit-linear-gradient(to left, #3F5EFB, #FC466B);  /* Chrome 10-25, Safari 5.1-6 */
+    color: linear-gradient(to left, #3F5EFB, #FC466B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    }
+
+    /* Responsive table styles */
+    .responsive-table {
+    li {
+        border-radius: 3px;
+        padding: 25px 30px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0px;
+    }
+    heading.li {
+        border-radius: 3px;
+        padding: 25px 30px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+    .table-header {
+        color:white;
+        font-weight:bold;
+        background-color: #40b2ff;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .table-row {
+        background-color: #ffffff;
+        box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.1);
+    }
+    .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9 {
+        border-right: 1px solid #ddd; /* Add border between cells */
+        padding: 1px;
+        text-align:center;
+        flex-basis: calc(100% / 9); /* Distribute columns evenly */
+    }
+    .table-row.selected {
+        background-color: #fffff; /* Highlight selected row */
+    }
+    }
+
+    /* Additional styles */
+    select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    }
+    .message {
+    font-size: 18px;
+    color: #fff;
+    font-weight:bold;
+    text-align: center;
+    margin-top: -50px; /* Adjust the margin-top */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    display: none; /* Hide the message by default */
+    animation: fade 2s; /* Apply animation */
+    }
+    .fixed-header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    /* Added CSS for table container */
+    .table-container {
+        max-height: calc(100vh - 200px); /* Adjust as needed */
+        overflow-y: auto;
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Stocks Ema&Rs/Rsi Day Counts</h1>
+    <div class="table-container">
+        <div class="responsive-table">
+            <ul id="financial-data">
+                <div class="heading fixed-header"> <!-- Fixed table heading -->
+                    <li class="table-header">
+                        <div class="col col-1">Stock Data</div>
+                        <div class="col col-2">Ema20 Output</div>
+                        <div class="col col-3">Ema50 Output</div>
+                        <div class="col col-4">Ema100 Output</div>
+                        <div class="col col-5">Ema200 Output</div>
+                        <div class="col col-6">Rsi Output</div>
+                        <div class="col col-7">Rs Output</div>
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+    <!-- Table container with fixed heading -->
+    <div class="table-container">
+        <div class="responsive-table">
+            <ul id="financial-data">
+                {% for ob in obj %}
+                <li class="table-row" data-symbol="{{ ob.symbol }}">
+                    <div class="col col-1" data-label="Stock Data">{{ ob.stock_data }}</div>
+                    <div class="col col-2" data-label="Ema20 Output">{{ ob.ema20_output }}</div>
+                    <div class="col col-3" data-label="Ema50 Output">{{ ob.ema50_output }}</div>
+                    <div class="col col-4" data-label="Ema100 Output">{{ ob.ema100_output }}</div>
+                    <div class="col col-5" data-label="Ema200 Output">{{ ob.ema200_output }}</div>
+                    <div class="col col-6" data-label="Rsi Output">{{ ob.rsi_output  }}</div>
+                    <div class="col col-7" data-label="Rs Output">{{ ob.rs_output  }}</div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

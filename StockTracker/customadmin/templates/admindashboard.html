@@ -1,0 +1,141 @@
+{% extends "./base2.html" %}
+{% block title %}Dashboard{% endblock title %}
+{% block content %}
+
+<style>
+  /* Card Styles */
+  .card {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px; /* Set a maximum width for cards */
+  }
+
+  .card-header {
+    background-color: #f5f5f5;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  /* Button Styles */
+  #openUrlsButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: left; /* Align button to the left */
+  }
+
+  #openUrlsButton:hover {
+    background-color: #0056b3;
+  }
+</style>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Latest Financial Data
+        </div>
+        <div class="card-body">
+          <p style="color:#007bff">Date: <span id="financialDate">{{ latest_financial_data.date }}</span></p>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Latest Sector Data
+        </div>
+        <div class="card-body">
+          <p style="color:#007bff">Date: <span id="sectorDate">{{ latest_sector_data.date }}</span></p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button id="openUrlsButton">Open URLs</button>
+
+<script>
+  document.getElementById('openUrlsButton').addEventListener('click', function() {
+    const currentDate = new Date();
+    const financialDate = new Date("{{ latest_financial_data.date }}");
+    const sectorDate = new Date("{{ latest_sector_data.date }}");
+
+    // Check if the financial date is equal to the current date
+    if (financialDate.getDate() === currentDate.getDate()) {
+      alert("Financial data is already up to date!");
+      document.getElementById('openUrlsButton').disabled = true;
+      return;
+    }
+
+    // Check if the sector date is equal to the current date
+    if (sectorDate.getDate() === currentDate.getDate()) {
+      alert("Sector data is already up to date!");
+      document.getElementById('openUrlsButton').disabled = true;
+      return;
+    }
+
+    // If not, proceed to open URLs
+    const urls = [
+      "{% url 'fetch_and_store_stock_data' %}",
+      "{% url 'fetch_and_calculate_ema_sector' %}",
+      "{% url 'analyze_closing_vs_ema' %}",
+      "{% url 'analyze_closing_vs_ema_sector' %}"
+    ];
+
+    openUrls(urls); // Call the function directly, starting from the first URL
+  });
+
+  function openUrls(urls) {
+    let index = 0; // Use `let` for a mutable variable
+
+    const openNextUrl = () => {
+      if (index >= urls.length) {
+        return; // All URLs opened
+      }
+      const newWindow = window.open(urls[index], '_blank'); // Open URL in new window/tab
+      if (newWindow) {
+        newWindow.onload = () => {  // Use arrow function for cleaner syntax
+          index++; // Increment index after loading to avoid race condition
+          openNextUrl(); // Open the next URL after the current one finishes loading
+        };
+      } else {
+        console.error(`Failed to open URL: ${urls[index]}`);  // Handle failed opening
+        index++; // Move to the next URL even if one fails
+      }
+    };
+
+    openNextUrl(); // Start opening URLs recursively
+  }
+   // Change the color of the date based on its value and day of the week
+      const financialDate = new Date("{{ latest_financial_data.date }}");
+      const sectorDate = new Date("{{ latest_sector_data.date }}");
+      const currentDate = new Date();
+      
+      // Check if the date is less than the current date
+      if (financialDate < currentDate) {
+        document.getElementById('financialDate').style.color = 'red';
+      } else if (financialDate.getDate() === currentDate.getDate()) {
+        document.getElementById('financialDate').style.color = 'green';
+      }
+      
+      if (sectorDate < currentDate) {
+        document.getElementById('sectorDate').style.color = 'red';
+      } else if (sectorDate.getDate() === currentDate.getDate()) {
+        document.getElementById('sectorDate').style.color = 'green';
+      }
+      
+</script>
+
+{% endblock content %}
